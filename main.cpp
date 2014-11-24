@@ -6,9 +6,9 @@ int main() {
     //CStorage stor();
 
     int choise = 0;
-    Value<int> intValue;
-    Value<char> charValue;
-    Value<manB> jobs;
+    //Value<int> intValue;
+    //Value<char> charValue;
+    Value<manB> manValue;
     while (choise != 5){
         choise = toMakeChoice();
         switch (choise){
@@ -18,13 +18,12 @@ int main() {
                 //std::cin >> number;
                 //intValue.addToHead(number);
                 manB tmpMan;
-                jobs.addToHead(tmpMan);
+                manValue.addToHead(tmpMan);
                 break;
                 }
             case 2:{
-                printf("Выбор пал на второй пункт\n");
-
-                intValue.printValue();
+                printf("Выбор пал на второй пункт\n");                
+                //intValue.printValue();
                 break;
                 }
             case 5:{

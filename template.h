@@ -8,14 +8,14 @@ struct Node {
         T data;
         Node *prew;
         Node *next;
-        Node(): prew(NULL), next(NULL) {}
+        Node(): prew(this), next(this) {}
 };
 public:
     Value();
     Value(T element);
     ~Value();
-    Value(const Value<T> &rhs);
-    Value& operator=(const Value<T> &);
+    Value(const Value &);
+    Value& operator=(const Value &);
     void addFirstNode(T data);
     void addToHead(T data);
     void setBeginning();
@@ -23,11 +23,9 @@ public:
     void setNext();
     void setPrew();
     int sizeValue();
-    void printValue();
-    T getData(); //Получить элемент неудаляя его
-    //void addToTail(T data);
-    //T pop(); //Получить элемент и удалить его из списка
-    //void delData(T data);
+    T getData(); //Получить элемент
+    void searchData(T data);
+    void delData(T data);
     //void clear();
 
 private:
@@ -38,15 +36,17 @@ private:
 
 template<typename T> Value<T>::Value(): pHead(NULL), pCurr(NULL), length(0){}
 
-template<typename T> Value<T>::Value(T element): pHead(NULL), pCurr(NULL), length(0){
+template<typename T> Value<T>::Value(T element):
+    pHead(NULL), pCurr(NULL), length(0){
+
     addToHead(element);
 }
 
-template <typename T> Value<T>::Value(const Value<T> &rhs){
-    this->Node = rhs.Node;
-    this->pHead = rhs.pHead;
-    this->pCurr = rhs.pCurr;
-    this->length = rhs.length;
+template <typename T> Value<T>::Value(const Value &){}
+
+template <typename T> Value<T>& Value<T>::operator=(const Value &rhs){
+    if (this == rhs)
+        return this;
 }
 
 template<typename T> Value<T>::~Value(){}
@@ -60,8 +60,8 @@ template <typename T> bool Value<T>::isNotEmpty(){
 template<typename T> void Value<T>::addFirstNode(T data){
     pHead = new Node;
     pHead->data = data;
-    pHead->next = pHead;
-    pHead->prew = pHead;
+    //pHead->next = pHead;
+    //pHead->prew = pHead;
     pCurr = pHead;
     length++;
 }
@@ -73,7 +73,6 @@ template <typename T> void Value<T>::addToHead(T data){
     }
     Node *pNewNode = new Node;
     pNewNode->data = data;
-    pNewNode->prew = pHead->prew;
     pNewNode->next = pHead;
     pHead->prew->next = pNewNode;
     pHead->prew = pNewNode;
@@ -82,14 +81,33 @@ template <typename T> void Value<T>::addToHead(T data){
     length++;
 }
 
-template <typename T> void Value<T>::printValue(){
-    if(isNotEmpty()){
+template <typename T> void Value<T>::delData(T data){
+    if (isNotEmpty()){
+        Node* pTemp = searchData(data);
+        pTemp->prew->next = pTemp->next;
+        pTemp->next->prew = pTemp->prew;
+        delete pTemp;
+    }
+}
+
+template <typename T> void Value<T>::searchData(T data){
+    if (isNotEmpty()){
         setBeginning();
-        for(int i(0);i<length;i++){
-            std::cout << pCurr->data << " " << std::endl;
+        for (int i(0); i<length && pCurr->data != data; i++){
             setNext();
         }
+        if (pCurr->data == data)
+            return pCurr;
+        else
+            std::cout << "Такого элемента нет в списке" << std::endl;
     }
+    else{
+        std::cout << "Список пуст" << std::endl;
+    }
+}
+
+template <typename T> T Value<T>::getData(){
+    return pCurr->data;
 }
 
 template <typename T> void Value<T>::setBeginning(){
