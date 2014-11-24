@@ -26,19 +26,20 @@ public:
     T getData(); //Получить элемент
     void searchData(T data);
     void delData(T data);
+    void sortData();
     //void clear();
 
 private:
     Node *pHead;
+    Node *pTail;
     Node *pCurr;
     int length;
 };
 
-template<typename T> Value<T>::Value(): pHead(NULL), pCurr(NULL), length(0){}
+template<typename T> Value<T>::Value(): pHead(NULL), pCurr(NULL), pTail(NULL), length(0){}
 
 template<typename T> Value<T>::Value(T element):
-    pHead(NULL), pCurr(NULL), length(0){
-
+    pHead(NULL), pCurr(NULL), pTail(NULL), length(0){
     addToHead(element);
 }
 
@@ -62,7 +63,7 @@ template<typename T> void Value<T>::addFirstNode(T data){
     pHead->data = data;
     //pHead->next = pHead;
     //pHead->prew = pHead;
-    pCurr = pHead;
+    pCurr = pTail = pHead;
     length++;
 }
 
@@ -71,12 +72,13 @@ template <typename T> void Value<T>::addToHead(T data){
         addFirstNode(data);
         return;
     }
-    Node *pNewNode = new Node;
-    pNewNode->data = data;
-    pNewNode->next = pHead;
-    pHead->prew->next = pNewNode;
-    pHead->prew = pNewNode;
-    pHead = pNewNode;
+    Node *pTemp = new Node;
+    pTemp->data = data;
+    pTemp->prew = pHead;
+    pHead->next = pTemp;
+    pTemp->next = pTail;
+    pTail->prew = pTemp;
+    pHead = pTemp;
     pCurr = pHead;
     length++;
 }
@@ -102,6 +104,33 @@ template <typename T> void Value<T>::searchData(T data){
             std::cout << "Такого элемента нет в списке" << std::endl;
     }
     else{
+        std::cout << "Список пуст" << std::endl;
+    }
+}
+
+template <typename T> void Value<T>::sortData(){
+    if (isNotEmpty()){
+        Node* pTemp; // = new Node;
+        Node* pSwap; // = new Node;
+        //int i(0), j(0);
+        setBeginning();
+        pTemp = pCurr;
+        for (int i(0); i<length-1; i++){
+            for (int j(0); j<length-1; j++){
+                setNext();
+                if (pTemp->data < pCurr->data){
+                    pSwap = pCurr;
+                    pCurr = pTemp;
+                    pTemp = pSwap;
+                }
+            }
+            pTemp = pTemp->next;
+            pCurr = pTemp;
+        }
+    delete pTemp;
+    delete pSwap;
+    }
+    else {
         std::cout << "Список пуст" << std::endl;
     }
 }
