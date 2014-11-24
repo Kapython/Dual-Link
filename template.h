@@ -24,14 +24,11 @@ public:
     void setPrew();
     int sizeValue();
     void printValue();
+    T getData(); //Получить элемент неудаляя его
     //void addToTail(T data);
     //T pop(); //Получить элемент и удалить его из списка
-    //T get(); //Получить элемент неудаляя его
     //void delData(T data);
-
     //void clear();
-    //
-
 
 private:
     Node *pHead;
@@ -46,7 +43,10 @@ template<typename T> Value<T>::Value(T element): pHead(NULL), pCurr(NULL), lengt
 }
 
 template <typename T> Value<T>::Value(const Value<T> &rhs){
-    this->Node.data = rhs.Node.data;
+    this->Node = rhs.Node;
+    this->pHead = rhs.pHead;
+    this->pCurr = rhs.pCurr;
+    this->length = rhs.length;
 }
 
 template<typename T> Value<T>::~Value(){}
