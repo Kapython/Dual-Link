@@ -9,7 +9,7 @@ int main() {
     Value<int> intValue;
     //Value<char> charValue;
     //Value<manB> manValue;
-    while (choise != 5){
+    while (choise != 6){
         choise = toMakeChoice();
         switch (choise){
             case 1: {
@@ -20,25 +20,63 @@ int main() {
                 break;
                 }
             case 2:{
-                for (int i(0); i<intValue.sizeValue();i++){
-                    std::cout << intValue.getData() << std::endl;
-                    intValue.setPrew();
+                if (intValue.isNotEmpty()){
+                    intValue.setHead();
+                    for (int i(0); i<intValue.sizeValue();i++){
+                        std::cout << intValue.getData() << "; ";
+                        intValue.setPrew();
+                    }
+                    std::cout <<"\n";
                 }
-                printf("\n");
+                else{
+                    std::cout << "Список пуст\n\n";
+                }
                 break;
                 }
             case 3:{
-                printf("\n");
-                printf("Сортировка\n\n");
+                std::cout << "\n";
+                std::cout << "Сортировка\n\n";
                 intValue.sortData();
                 break;
             }
-            case 5:{                
-                printf("Спасибо\n\n");
+            case 4:{
+                intValue.clear();
+                break;
+            }
+            case 5:{
+                int choise(0);
+                while (choise !=3){
+                    std::cout << "1 - удалить элемент\n";
+                    std::cout << "3 - Выход\n\n";
+                    std::cout << "Выберите пункт: ";
+                    std::cin >> choise;
+                    if (choise == 1){
+                        if (intValue.isNotEmpty()){
+                            intValue.setHead();
+                            for (int i(0); i<intValue.sizeValue();i++){
+                                std::cout << intValue.getData() << "; ";
+                                intValue.setPrew();
+                            }
+                            std::cout <<"\n";
+                            std::cout << "Ведите элемент для удаления: ";
+                            std::cin >> choise;
+                            intValue.delData(choise);
+                        }
+                        else{
+                            std::cout << "Список пуст внесите элементы в список\n\n";
+                            choise = 3;
+                        }
+                    }
+                }
+            ;
+                break;
+                }
+            case 6:{
+                std::cout << "Спасибо\n\n";
                 break;
                 }
             default:{
-                printf("Введите коректное значение\n");
+                std::cout << "Введите коректное значение\n";
                 break;
                 }
         }

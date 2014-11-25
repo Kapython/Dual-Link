@@ -6,8 +6,8 @@ template <typename T> class Value
 {
 struct Node {
         T data;
-        Node *prew;
-        Node *next;
+        Node* prew;
+        Node* next;
         Node(): prew(this), next(this) {}
 };
 public:
@@ -18,7 +18,8 @@ public:
     Value& operator=(const Value &);
     void addFirstNode(T data);
     void addToHead(T data);
-    void setBeginning();
+    void setHead();
+    void setTail();
     bool isNotEmpty();
     void setNext();
     void setPrew();
@@ -27,20 +28,25 @@ public:
     void searchData(T data);
     void delData(T data);
     void sortData();
-    //void clear();
+    void clear();
 
 private:
-    Node *pHead;
-    Node *pTail;
-    Node *pCurr;
+    Node* pHead;
+    Node* pCurr;
+    Node* pTail;
     int length;
 };
 
-template<typename T> Value<T>::Value(): pHead(NULL), pCurr(NULL), pTail(NULL), length(0){}
+template<typename T> Value<T>::Value():
+    pHead(NULL), pCurr(NULL), pTail(NULL), length(0){}
 
 template<typename T> Value<T>::Value(T element):
     pHead(NULL), pCurr(NULL), pTail(NULL), length(0){
     addToHead(element);
+}
+
+template <typename T> Value<T>::~Value(){
+    clear();
 }
 
 template <typename T> Value<T>::Value(const Value &){}
@@ -49,8 +55,6 @@ template <typename T> Value<T>& Value<T>::operator=(const Value &rhs){
     if (this == rhs)
         return this;
 }
-
-template<typename T> Value<T>::~Value(){}
 
 template <typename T> bool Value<T>::isNotEmpty(){
     if (pHead)
@@ -61,10 +65,22 @@ template <typename T> bool Value<T>::isNotEmpty(){
 template<typename T> void Value<T>::addFirstNode(T data){
     pHead = new Node;
     pHead->data = data;
-    //pHead->next = pHead;
-    //pHead->prew = pHead;
     pCurr = pTail = pHead;
     length++;
+}
+
+template <typename T> void Value<T>::clear(){
+    setTail();
+    for (int i(0); i<sizeValue(); i++){
+        Node* pTemp;
+        pTemp = pCurr;
+        setNext();
+        delete pTemp;
+        length--;
+    }
+    pHead = pTail = pCurr = NULL;
+    std::cout << "Список очищен" << std::endl << std::endl;
+
 }
 
 template <typename T> void Value<T>::addToHead(T data){
@@ -85,16 +101,29 @@ template <typename T> void Value<T>::addToHead(T data){
 
 template <typename T> void Value<T>::delData(T data){
     if (isNotEmpty()){
-        Node* pTemp = searchData(data);
-        pTemp->prew->next = pTemp->next;
-        pTemp->next->prew = pTemp->prew;
-        delete pTemp;
+        Node* pTemp;
+        setHead();
+        for (int i(0); i<length; i++){
+            if (data == pCurr->data){
+                pTemp = pCurr;
+                pCurr->prew->next = pCurr->next;
+                pCurr->next->prew = pCurr->prew;
+                setHead();
+                delete pTemp;
+                pTemp = NULL;
+                length--;
+                return;
+            }
+            else {
+                setPrew();
+            }
+        }
     }
 }
 
 template <typename T> void Value<T>::searchData(T data){
-    if (isNotEmpty()){
-        setBeginning();
+    if (isNotEmpty()){        
+        setHead();
         for (int i(0); i<length && pCurr->data != data; i++){
             setNext();
         }
@@ -110,28 +139,27 @@ template <typename T> void Value<T>::searchData(T data){
 
 template <typename T> void Value<T>::sortData(){
     if (isNotEmpty()){
-        Node* pTemp; // = new Node;
-        Node* pSwap; // = new Node;
-        //int i(0), j(0);
-        setBeginning();
-        pTemp = pCurr;
-        for (int i(0); i<length-1; i++){
-            for (int j(0); j<length-1; j++){
-                setNext();
-                if (pTemp->data < pCurr->data){
-                    pSwap = pCurr;
-                    pCurr = pTemp;
-                    pTemp = pSwap;
+        Node* pTemp; // Временный указатель
+        setHead();
+        pTemp = pHead;
+        while (pTemp != pTail) { //если текущее положение не хвост входим
+            setPrew();
+            while (pCurr != pHead) { //если текущее положение не голова входим
+                if (pTemp->data > pCurr->data){
+                    //T tempData = pTemp->data;
+                    //pTemp->data = pCurr->data;
+                    //pCurr->data = tempData;
+
+                    std::swap(pTemp->data, pCurr->data);
                 }
+                setPrew(); // переключам текущее положение в ранее добавленное
             }
-            pTemp = pTemp->next;
+            pTemp = pTemp->prew; // переключаем на следующее сравниваемое значение
             pCurr = pTemp;
         }
-    delete pTemp;
-    delete pSwap;
     }
     else {
-        std::cout << "Список пуст" << std::endl;
+        std::cout << "Список пуст\n\n" << std::endl;
     }
 }
 
@@ -139,8 +167,12 @@ template <typename T> T Value<T>::getData(){
     return pCurr->data;
 }
 
-template <typename T> void Value<T>::setBeginning(){
+template <typename T> void Value<T>::setHead(){
     pCurr = pHead;
+}
+
+template <typename T> void Value<T>::setTail(){
+    pCurr = pTail;
 }
 
 template <typename T> void Value<T>::setNext(){
